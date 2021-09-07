@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
+import 'package:yadplayer/Authorize/Authorize.dart';
 
 import '../bloc.dart';
 
@@ -29,9 +30,6 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   String _loginUrl = "https://oauth.yandex.ru/authorize?client_id=3b45d777976d49aea146b1d79bcd13d1&response_type=code&redirect_uri=com.egorlucky.yadplayer://getToken";
-  String? accessToken;
-  String? refreshToken;
-  dynamic userInfo;
 
   @override
   void initState() {
@@ -63,76 +61,15 @@ class _MyHomePageState extends State<MyHomePage> {
             StreamBuilder<String>(
               stream: _bloc.state,
               builder: (context, snapshot) {
-                if (!snapshot.hasData && accessToken == null) {
+                if(snapshot.hasData == false){
                   return Container(
                       child: Center(
                           child: ElevatedButton(
                             onPressed: _launchURL,
                             child: Text('Login via yandex'),
                           )));
-                } else if(accessToken == null){
-
-                  var code = snapshot.data?.replaceAll("com.egorlucky.yadplayer://getToken?code=", "");
-                  var url = Uri.parse("https://yadplayer.herokuapp.com/Auth/getToken?code=${code?.toString()}");
-                  http.get(url)
-                  .then((response) async {
-                    if(response.statusCode != 200) {
-                      return response;
-                    }
-
-                    var jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
-                    var accessToken = jsonResponse['accessToken'].toString();
-                    var refreshToken = jsonResponse['refreshToken'].toString();
-
-                    //save accessToken
-
-                    this.setState(() {
-                      this.accessToken = accessToken;
-                      this.refreshToken = refreshToken;
-                    });
-
-                    return response;
-
-                  });
-
-                  return Container(
-                      child: Center(
-                          child: Padding(
-                              padding: EdgeInsets.all(20.0),
-                              child: Text('Getting access token via code = ${code as String}',
-                                  style: Theme.of(context).textTheme.title))));
-                } else if (userInfo == null) {
-                  var url = Uri.parse("https://yadplayer.herokuapp.com/User/getUserInfo");
-                  http.get(url, headers: {"Authorization": "Bearer ${this.accessToken}"})
-                      .then((response) async {
-                        if(response.statusCode != 200) {
-                          return response;
-                        }
-
-                        var jsonResponse = jsonDecode(response.body) as dynamic;
-
-                        //save accessToken
-
-                        this.setState(() {
-                          this.userInfo = jsonResponse;
-                        });
-
-                        return response;
-
-                      });
-                  return Container(
-                        child: Center(
-                              child: Padding(
-                                    padding: EdgeInsets.all(20.0),
-                                    child: Text('getting user info...',
-                                        style: Theme.of(context).textTheme.title))));
-              }
-              return Container(
-                    child: Center(
-                          child: Padding(
-                                padding: EdgeInsets.all(20.0),
-                                child: Text('Hello, ${userInfo['email']}!',
-                                    style: Theme.of(context).textTheme.title))));
+                }
+                return Authorize(url: snapshot.data);
             }
         )
       )

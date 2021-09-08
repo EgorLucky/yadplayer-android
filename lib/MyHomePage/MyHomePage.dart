@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
@@ -30,6 +31,8 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   String _loginUrl = "https://oauth.yandex.ru/authorize?client_id=3b45d777976d49aea146b1d79bcd13d1&response_type=code&redirect_uri=com.egorlucky.yadplayer://getToken";
+  FlutterSecureStorage _storage = new FlutterSecureStorage();
+  bool? _authState;
 
   @override
   void initState() {
@@ -40,7 +43,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void initAsync() async {
+    var isAuthorized = await _storage.containsKey(key: "yadplayerAccessToken");
 
+    setState(() {
+      _authState = isAuthorized;
+    });
   }
 
 
@@ -61,12 +68,19 @@ class _MyHomePageState extends State<MyHomePage> {
             StreamBuilder<String>(
               stream: _bloc.state,
               builder: (context, snapshot) {
-                if(snapshot.hasData == false){
+                if(_authState == false && snapshot.hasData == false) {
                   return Container(
                       child: Center(
                           child: ElevatedButton(
                             onPressed: _launchURL,
                             child: Text('Login via yandex'),
+                          )));
+                } else if(_authState == null){
+                  return Container(
+                      child: Center(
+                          child: ElevatedButton(
+                            onPressed: _launchURL,
+                            child: Text('checking auth state...'),
                           )));
                 }
                 return Authorize(url: snapshot.data);

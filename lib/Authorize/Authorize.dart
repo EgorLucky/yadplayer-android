@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 class Authorize extends StatefulWidget {
   Authorize({Key? key, String? url}) : super(key: key) {
     this.url = url;
@@ -22,9 +24,9 @@ class _AuthorizeState extends State<Authorize> {
     _codeUri = url;
   }
 
-  String? _codeUri;
   String? accessToken;
   String? refreshToken;
+  String? _codeUri;
   dynamic userInfo;
 
   @override
@@ -35,6 +37,7 @@ class _AuthorizeState extends State<Authorize> {
   }
 
   void initAsync() async {
+    var accessToken = await (new FlutterSecureStorage()).read(key: "yadplayerAccessToken");
     if (_codeUri != null && accessToken == null) {
         var code = _codeUri?.replaceAll("com.egorlucky.yadplayer://getToken?code=", "");
         var url = Uri.parse("https://yadplayer.herokuapp.com/Auth/getToken?code=${code?.toString()}");
@@ -54,11 +57,17 @@ class _AuthorizeState extends State<Authorize> {
           this.accessToken = accessToken;
           this.refreshToken = refreshToken;
         });
+
+        var storage = new FlutterSecureStorage();
+
+        await storage.write(key: "yadplayerAccessToken", value: accessToken);
+        await storage.write(key: "yadplayerRefrehToken", value: refreshToken);
     }
 
+    accessToken = await (new FlutterSecureStorage()).read(key: "yadplayerAccessToken");
     if (userInfo == null) {
       var url = Uri.parse("https://yadplayer.herokuapp.com/User/getUserInfo");
-      var response = await http.get(url, headers: {"Authorization": "Bearer ${this.accessToken}"});
+      var response = await http.get(url, headers: {"Authorization": "Bearer ${accessToken}"});
         if(response.statusCode != 200) {
           return;
         }

@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 import 'package:yadplayer/Authorize/Authorize.dart';
+import 'package:yadplayer/Profile/Profile.dart';
 
 import '../bloc.dart';
 
@@ -33,26 +34,34 @@ class _MyHomePageState extends State<MyHomePage> {
   String _loginUrl = "https://oauth.yandex.ru/authorize?client_id=3b45d777976d49aea146b1d79bcd13d1&response_type=code&redirect_uri=com.egorlucky.yadplayer://getToken";
   FlutterSecureStorage _storage = new FlutterSecureStorage();
   bool? _authState;
+  bool? _isLogoutExecuted;
   int _selectedIndex = 0;
   static const TextStyle optionStyle = TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  static const List<Widget> _widgetOptions = <Widget>[
-    Text(
-      'Index 0: Home',
-      style: optionStyle,
-    ),
-    Text(
-      'Index 1: Business',
-      style: optionStyle,
-    ),
-    Text(
-      'Index 2: School',
-      style: optionStyle,
-    ),
-  ];
+
+  void LogoutExecuted(){
+    setState(() {
+      _selectedIndex = 0;
+      _authState = false;
+      _isLogoutExecuted = true;
+    });
+  }
+
+  List<Widget>? _widgetOptions;
 
   @override
   void initState() {
     // TODO: implement initState
+    _widgetOptions = <Widget>[
+            Text(
+              'Index 0: Home',
+              style: optionStyle,
+            ),
+            Profile(logoutExecuted: LogoutExecuted),
+            Text(
+              'Index 2: School',
+              style: optionStyle,
+            ),
+    ];
 
     initAsync();
     super.initState();
@@ -89,22 +98,23 @@ class _MyHomePageState extends State<MyHomePage> {
             StreamBuilder<String>(
               stream: _bloc.state,
               builder: (context, snapshot) {
-                if(_authState == false && snapshot.hasData == false) {
+                if(_authState == false && (snapshot.hasData == false || _isLogoutExecuted == true)) {
                   return Container(
                       child: Center(
                           child: ElevatedButton(
-                            onPressed: _launchURL,
+                            onPressed: _loginButtonClicked,
                             child: Text('Login via yandex'),
                           )));
-                } else if(_authState == null){
+                } else if(_authState == null && _selectedIndex == 0){
                   return Container(
                       child: Center(
-                          child: ElevatedButton(
-                            onPressed: _launchURL,
-                            child: Text('checking auth state...'),
-                          )));
+                          child: Text('checking auth state...'),
+                          ));
                 }
-                return Authorize(url: snapshot.data);
+                if(_selectedIndex == 0)
+                  return Authorize(url: snapshot.data);
+                else
+                  return _widgetOptions?.elementAt(_selectedIndex) ?? Text('error');
             }
         )
       ),
@@ -126,6 +136,8 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void _launchURL() async =>
-      await canLaunch(_loginUrl) ? await launch(_loginUrl) : throw 'Could not launch $_loginUrl';
+  void _loginButtonClicked() async {
+    await canLaunch(_loginUrl) ? await launch(_loginUrl) : throw 'Could not launch $_loginUrl';
+    _isLogoutExecuted = false;
+  }
 }

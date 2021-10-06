@@ -39,7 +39,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
   static const TextStyle optionStyle = TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
 
-  void LogoutExecuted(){
+  void logoutExecuted(){
     setState(() {
       _selectedIndex = 0;
       _authState = AuthState.Unauthorized;
@@ -63,7 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
               'Index 0: Home',
               style: optionStyle,
             ),
-            Profile(logoutExecuted: LogoutExecuted),
+            Profile(logoutExecuted: logoutExecuted),
             Text(
               'Index 2: School',
               style: optionStyle,

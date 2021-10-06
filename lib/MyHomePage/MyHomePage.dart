@@ -98,11 +98,11 @@ class _MyHomePageState extends State<MyHomePage> {
     DeepLinkBloc _bloc = Provider.of<DeepLinkBloc>(context);
 
     return Scaffold(
-        appBar: AppBar(
+        appBar: _authState == AuthState.Authorized ? AppBar(
           // Here we take the value from the MyHomePage object that was created by
           // the App.build method, and use it to set our appbar title.
-          title: Text(widget.title),
-        ),
+          title:  Text(widget.title),
+        ) : null,
         body: Center(
           // Center is a layout widget. It takes a single child and positions it
           // in the middle of the parent.
@@ -132,7 +132,7 @@ class _MyHomePageState extends State<MyHomePage> {
             }
         )
       ),
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: _authState == AuthState.Authorized ? BottomNavigationBar(
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
               icon: Icon(Icons.home),
@@ -146,7 +146,7 @@ class _MyHomePageState extends State<MyHomePage> {
           currentIndex: _selectedIndex,
           selectedItemColor: Colors.amber[800],
           onTap: _onItemTapped,
-        )
+        ) : null
     );
   }
 }

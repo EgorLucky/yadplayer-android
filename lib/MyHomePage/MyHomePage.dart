@@ -88,6 +88,11 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void _loginButtonClicked() async {
+    await canLaunch(_loginUrl) ? await launch(_loginUrl) : throw 'Could not launch $_loginUrl';
+    _isLogoutExecuted = false;
+  }
+
   @override
   Widget build(BuildContext context) {
     DeepLinkBloc _bloc = Provider.of<DeepLinkBloc>(context);
@@ -143,10 +148,5 @@ class _MyHomePageState extends State<MyHomePage> {
           onTap: _onItemTapped,
         )
     );
-  }
-
-  void _loginButtonClicked() async {
-    await canLaunch(_loginUrl) ? await launch(_loginUrl) : throw 'Could not launch $_loginUrl';
-    _isLogoutExecuted = false;
   }
 }

@@ -71,6 +71,12 @@ class _AuthorizeState extends State<Authorize> {
     }
 
     accessToken = await (new FlutterSecureStorage()).read(key: "yadplayerAccessToken");
+
+    this.setState(() {
+      this.accessToken = accessToken;
+      //this.refreshToken = refreshToken;
+    });
+
     if (userInfo == null) {
       var url = Uri.parse("https://yadplayer.herokuapp.com/User/getUserInfo");
       var response = await http.get(url, headers: {"Authorization": "Bearer ${accessToken}"});

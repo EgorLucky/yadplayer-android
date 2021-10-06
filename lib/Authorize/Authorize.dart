@@ -9,24 +9,28 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class Authorize extends StatefulWidget {
-  Authorize({Key? key, String? url}) : super(key: key) {
+  Authorize({Key? key, String? url, Function? authorized}) : super(key: key) {
     this.url = url;
+    this.authorized = authorized;
   }
 
   String? url;
+  Function? authorized;
 
   @override
-  _AuthorizeState createState() => _AuthorizeState(this.url);
+  _AuthorizeState createState() => _AuthorizeState(this.url, this.authorized);
 }
 
 class _AuthorizeState extends State<Authorize> {
-  _AuthorizeState(String? url): super(){
+  _AuthorizeState(String? url, Function? authorized): super(){
     _codeUri = url;
+    _authorized = authorized;
   }
 
   String? accessToken;
   String? refreshToken;
   String? _codeUri;
+  Function? _authorized;
   dynamic userInfo;
 
   @override
@@ -57,6 +61,8 @@ class _AuthorizeState extends State<Authorize> {
           this.accessToken = accessToken;
           this.refreshToken = refreshToken;
         });
+
+        _authorized?.call();
 
         var storage = new FlutterSecureStorage();
 

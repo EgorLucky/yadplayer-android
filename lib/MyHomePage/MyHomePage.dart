@@ -47,6 +47,12 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void onAuthorized(){
+    setState(() {
+      _authState = AuthState.Authorized;
+    });
+  }
+
   List<Widget>? _widgetOptions;
 
   @override

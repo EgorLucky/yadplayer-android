@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     DeepLinkBloc _bloc = DeepLinkBloc();
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'YaDPlayer',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
           body: Provider<DeepLinkBloc>(
               create: (context) => _bloc,
               dispose: (context, bloc) => bloc.dispose(),
-              child: MyHomePage(title: 'Flutter Demo Home Page')))
+              child: MyHomePage(title: 'YaDPlayer Home Page')))
       //home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }

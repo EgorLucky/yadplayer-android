@@ -57,7 +57,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     _widgetOptions = <Widget>[
             Text(
               'Index 0: Home',
@@ -89,8 +88,12 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _loginButtonClicked() async {
-    await canLaunch(_loginUrl) ? await launch(_loginUrl) : throw 'Could not launch $_loginUrl';
-    _isLogoutExecuted = false;
+    if(await canLaunch(_loginUrl))
+      await launch(_loginUrl);
+    else throw 'Could not launch $_loginUrl';
+    setState(() {
+      _isLogoutExecuted = false;
+    });
   }
 
   @override

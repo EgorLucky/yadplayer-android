@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart' as http;
 
 class Profile extends StatefulWidget {
   Profile({Key? key, Function? logoutExecuted}) : super(key: key) {
@@ -10,15 +13,13 @@ class Profile extends StatefulWidget {
   Function? _logoutExecuted;
 
   @override
-  _ProfileState createState() => _ProfileState(_logoutExecuted);
+  _ProfileState createState() => _ProfileState();
 }
 
 class _ProfileState extends State<Profile> {
-  _ProfileState(Function? logoutExecuted): super() {
-    _logoutExecuted = logoutExecuted;
+  _ProfileState(): super() {
   }
   dynamic userInfo;
-  Function? _logoutExecuted;
 
 
   @override
@@ -29,27 +30,52 @@ class _ProfileState extends State<Profile> {
   }
 
   void initAsync() async {
+    var storage = new FlutterSecureStorage();
+
+    var accessToken = await storage.read(key: "yadplayerAccessToken");
+
+    if (userInfo == null && accessToken != null) {
+      var url = Uri.parse("https://yadplayer.herokuapp.com/User/getUserInfo");
+      var response = await http.get(url, headers: {"Authorization": "Bearer ${accessToken}"});
+      if(response.statusCode != 200) {
+        return;
+      }
+
+      var jsonResponse = jsonDecode(response.body) as dynamic;
+
+      this.setState(() {
+        this.userInfo = jsonResponse;
+      });
+
+    }
   }
 
   void _logoutPressed() async {
     var storage = new FlutterSecureStorage();
 
     await storage.delete(key: "yadplayerAccessToken");
-    await storage.delete(key: "yadplayerRefrehToken");
+    await storage.delete(key: "yadplayerRefreshToken");
 
-    _logoutExecuted?.call();
+    widget._logoutExecuted?.call();
   }
 
 
   @override
   Widget build(BuildContext context) {
+    var status = "";
+    if(userInfo == null) {
+      status = 'getting user info...';
+    }
+    else
+      status = 'from ${userInfo['email']}';
+
     return Container(
         child: Center(
             child: Padding(
                 padding: EdgeInsets.all(20.0),
                 child: ElevatedButton(
                   onPressed: _logoutPressed,
-                  child: Text('Logout')))));
+                  child: Text('Logout ${userInfo == null? '' : status}')))));
   }
 
 }

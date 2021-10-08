@@ -1,5 +1,5 @@
 enum AuthState{
-  Undefined,
-  Authorized,
-  Unauthorized
+  undefined,
+  authorized,
+  unauthorized
 }

@@ -34,7 +34,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   String _loginUrl = "https://oauth.yandex.ru/authorize?client_id=3b45d777976d49aea146b1d79bcd13d1&response_type=code&redirect_uri=com.egorlucky.yadplayer://getToken";
   FlutterSecureStorage _storage = new FlutterSecureStorage();
-  AuthState _authState = AuthState.Undefined;
+  AuthState _authState = AuthState.undefined;
   bool? _isLogoutExecuted;
   int _selectedIndex = 0;
   static const TextStyle optionStyle = TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
@@ -42,14 +42,14 @@ class _MyHomePageState extends State<MyHomePage> {
   void logoutExecuted(){
     setState(() {
       _selectedIndex = 0;
-      _authState = AuthState.Unauthorized;
+      _authState = AuthState.unauthorized;
       _isLogoutExecuted = true;
     });
   }
 
   void onAuthorized(){
     setState(() {
-      _authState = AuthState.Authorized;
+      _authState = AuthState.authorized;
     });
   }
 
@@ -78,7 +78,7 @@ class _MyHomePageState extends State<MyHomePage> {
     var isAuthorized = await _storage.containsKey(key: "yadplayerAccessToken");
 
     setState(() {
-      _authState = isAuthorized? AuthState.Authorized: AuthState.Unauthorized;
+      _authState = isAuthorized? AuthState.authorized: AuthState.unauthorized;
     });
   }
 
@@ -98,7 +98,7 @@ class _MyHomePageState extends State<MyHomePage> {
     DeepLinkBloc _bloc = Provider.of<DeepLinkBloc>(context);
 
     return Scaffold(
-        appBar: _authState == AuthState.Authorized ? AppBar(
+        appBar: _authState == AuthState.authorized ? AppBar(
           // Here we take the value from the MyHomePage object that was created by
           // the App.build method, and use it to set our appbar title.
           title:  Text(widget.title),
@@ -110,29 +110,25 @@ class _MyHomePageState extends State<MyHomePage> {
             StreamBuilder<String>(
               stream: _bloc.state,
               builder: (context, snapshot) {
-                if(_authState == AuthState.Undefined && _selectedIndex == 0)
+                if(_authState == AuthState.undefined/* && _selectedIndex == 0*/)
                   return Container(
                       child: Center(
                         child: Text('checking auth state...'),
                       ));
-                else if(_authState == AuthState.Unauthorized &&
-                        (snapshot.hasData == false || _isLogoutExecuted == true)) {
-                  return Container(
-                      child: Center(
-                          child: ElevatedButton(
-                            onPressed: _loginButtonClicked,
-                            child: Text('Login via yandex'),
-                          )));
+                if(_authState == AuthState.unauthorized){
+                  return Authorize(
+                      url: snapshot.data,
+                      authorized: onAuthorized,
+                      isLogoutExecuted: _isLogoutExecuted,
+                      loginButtonClicked: _loginButtonClicked);
                 }
-                else if(_selectedIndex == 0)
-                  return Authorize(url: snapshot.data, authorized: onAuthorized);
-                else if(_authState == AuthState.Authorized)
+                else if(_authState == AuthState.authorized)
                   return _widgetOptions?.elementAt(_selectedIndex) ?? Text('error');
                 return Text('error');
             }
         )
       ),
-      bottomNavigationBar: _authState == AuthState.Authorized ? BottomNavigationBar(
+      bottomNavigationBar: _authState == AuthState.authorized ? BottomNavigationBar(
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
               icon: Icon(Icons.home),

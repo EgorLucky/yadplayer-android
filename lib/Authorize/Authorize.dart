@@ -9,41 +9,40 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class Authorize extends StatefulWidget {
-  Authorize({Key? key, String? url, Function? authorized}) : super(key: key) {
+  Authorize({Key? key,
+      String? url,
+      Function? authorized,
+      bool? isLogoutExecuted,
+      required this.loginButtonClicked}) : super(key: key) {
     this.url = url;
     this.authorized = authorized;
+    this.isLogoutExecuted = isLogoutExecuted;
   }
 
   String? url;
+  bool? isLogoutExecuted;
+
   Function? authorized;
+  void Function() loginButtonClicked;
 
   @override
-  _AuthorizeState createState() => _AuthorizeState(this.url, this.authorized);
+  _AuthorizeState createState() => _AuthorizeState();
 }
 
 class _AuthorizeState extends State<Authorize> {
-  _AuthorizeState(String? url, Function? authorized): super(){
-    _codeUri = url;
-    _authorized = authorized;
-  }
-
-  String? accessToken;
-  String? refreshToken;
-  String? _codeUri;
-  Function? _authorized;
-  dynamic userInfo;
+  _AuthorizeState(): super();
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     initAsync();
   }
 
   void initAsync() async {
-    var accessToken = await (new FlutterSecureStorage()).read(key: "yadplayerAccessToken");
-    if (_codeUri != null && accessToken == null) {
-        var code = _codeUri?.replaceAll("com.egorlucky.yadplayer://getToken?code=", "");
+    var storage = new FlutterSecureStorage();
+
+    if (widget.url != null) {
+        var code = widget.url?.replaceAll("com.egorlucky.yadplayer://getToken?code=", "");
         var url = Uri.parse("https://yadplayer.herokuapp.com/Auth/getToken?code=${code?.toString()}");
         var response = await http.get(url);
         if(response.statusCode != 200) {
@@ -55,60 +54,37 @@ class _AuthorizeState extends State<Authorize> {
         var accessToken = jsonResponse['accessToken'].toString();
         var refreshToken = jsonResponse['refreshToken'].toString();
 
-        //save accessToken
-
-        this.setState(() {
-          this.accessToken = accessToken;
-          this.refreshToken = refreshToken;
-        });
-
-        _authorized?.call();
-
-        var storage = new FlutterSecureStorage();
-
         await storage.write(key: "yadplayerAccessToken", value: accessToken);
-        await storage.write(key: "yadplayerRefrehToken", value: refreshToken);
-    }
+        await storage.write(key: "yadplayerRefreshToken", value: refreshToken);
 
-    accessToken = await (new FlutterSecureStorage()).read(key: "yadplayerAccessToken");
-
-    this.setState(() {
-      this.accessToken = accessToken;
-      //this.refreshToken = refreshToken;
-    });
-
-    if (userInfo == null) {
-      var url = Uri.parse("https://yadplayer.herokuapp.com/User/getUserInfo");
-      var response = await http.get(url, headers: {"Authorization": "Bearer ${accessToken}"});
-        if(response.statusCode != 200) {
-          return;
-        }
-
-        var jsonResponse = jsonDecode(response.body) as dynamic;
-
-        this.setState(() {
-          this.userInfo = jsonResponse;
-        });
-
+        widget.authorized?.call();
     }
   }
 
 
   @override
+  void didUpdateWidget(covariant Authorize oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    initAsync();
+  }
+
+
+  @override
   Widget build(BuildContext context) {
-    var status = "";
-    if (_codeUri != null && accessToken == null) {
-      status = 'Getting access token via code....';
-    } else if (userInfo == null) {
-      status = 'getting user info...';
+    if((widget.url == null || widget.isLogoutExecuted == true)) {
+      return Container(
+          child: Center(
+              child: ElevatedButton(
+                onPressed: widget.loginButtonClicked,
+                child: Text('Login via yandex'),
+              )));
     }
-    else
-      status = 'Hello, ${userInfo['email']}!';
+
     return Container(
         child: Center(
             child: Padding(
                 padding: EdgeInsets.all(20.0),
-                child: Text(status,
+                child: Text('Getting access token via code....',
                     style: Theme.of(context).textTheme.headline6))));
   }
 }

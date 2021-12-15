@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:yadplayer/ya_d_player_service_api/models/user.dart';
+import 'package:yadplayer/ya_d_player_service_api/ya_d_player_service_api.dart';
 
 class Profile extends StatefulWidget {
   Profile({Key? key, required this.logoutExecuted}) : super(key: key);
@@ -16,7 +18,7 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   _ProfileState(): super();
-  dynamic userInfo;
+  User? userInfo;
 
 
   @override
@@ -32,13 +34,9 @@ class _ProfileState extends State<Profile> {
     var accessToken = await storage.read(key: "yadplayerAccessToken");
 
     if (userInfo == null && accessToken != null) {
-      var url = Uri.parse("https://yadplayer.herokuapp.com/User/getUserInfo");
-      var response = await http.get(url, headers: {"Authorization": "Bearer $accessToken"});
-      if(response.statusCode != 200) {
-        return;
-      }
+      var yadPlayerService = new YaDPlayerServiceAPI();
 
-      var jsonResponse = jsonDecode(response.body) as dynamic;
+      var jsonResponse = await yadPlayerService.user.getUserInfo(accessToken);
 
       this.setState(() {
         this.userInfo = jsonResponse;
@@ -64,7 +62,7 @@ class _ProfileState extends State<Profile> {
       status = 'getting user info...';
     }
     else
-      status = 'from ${userInfo['email']}';
+      status = 'from ${userInfo?.email}';
 
     return Container(
         child: Center(

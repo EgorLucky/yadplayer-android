@@ -1,11 +1,11 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:yadplayer/file.dart';
+import 'package:yadplayer/ya_d_player_service_api/models/file.dart';
 
-class YaDPlayerServiceAPI{
-  YaDPlayerServiceAPI();
+class FileController{
+  FileController({required this.host});
 
-  final host = "https://yadplayer.herokuapp.com";
+  String host;
 
   Future<List<File>> getFiles(String accessToken, String path, int page) async {
     path = Uri.encodeQueryComponent(path);
@@ -17,8 +17,8 @@ class YaDPlayerServiceAPI{
     var jsonResponse = jsonDecode(response.body) as List<dynamic>;
 
     var result = jsonResponse
-                .map(jsonToFile)
-                .toList();
+        .map(jsonToFile)
+        .toList();
 
     return result;
   }
@@ -55,15 +55,15 @@ class YaDPlayerServiceAPI{
   }
 
   File jsonToFile(e) => File(
-      path: e["path"],
-      name: e["name"],
-      parentFolderPath: e["parentFolderPath"],
-      parentFolder: e["parentFolder"],
-      type: e["type"],
-      yandexUserId: e["yandexUserId"],
-      resourceId: e["resourceId"],
-      synchronizationProcessId: e["synchronizationProcessId"],
-      createDateTime: e["createDateTime"],
-      lastUpdateDateTime: e["lastUpdateDateTime"],
-    );
+    path: e["path"],
+    name: e["name"],
+    parentFolderPath: e["parentFolderPath"],
+    parentFolder: e["parentFolder"],
+    type: e["type"],
+    yandexUserId: e["yandexUserId"],
+    resourceId: e["resourceId"],
+    synchronizationProcessId: e["synchronizationProcessId"],
+    createDateTime: e["createDateTime"],
+    lastUpdateDateTime: e["lastUpdateDateTime"],
+  );
 }

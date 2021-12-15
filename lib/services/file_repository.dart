@@ -1,6 +1,6 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:yadplayer/YaDPlayerServiceAPI.dart';
-import 'package:yadplayer/file.dart';
+import 'package:yadplayer/ya_d_player_service_api/ya_d_player_service_api.dart';
+import 'package:yadplayer/ya_d_player_service_api/models/file.dart';
 
 class FileRepository {
   var yadplayerService = new YaDPlayerServiceAPI();
@@ -9,7 +9,7 @@ class FileRepository {
   @override
   Future<List<File>> getFiles({String path = "", int page = 1}) async {
       var accessToken = (await secureStorage.read(key:"yadplayerAccessToken")).toString();
-      var response = await yadplayerService.getFiles(accessToken, path, page);
+      var response = await yadplayerService.file.getFiles(accessToken, path, page);
 
       return response;
   }
@@ -17,7 +17,7 @@ class FileRepository {
   @override
   Future<String?> getAudioUrl(File file) async {
     var accessToken = (await secureStorage.read(key:"yadplayerAccessToken")).toString();
-    var response = await yadplayerService.getAudioUrl(accessToken, file.path);
+    var response = await yadplayerService.file.getAudioUrl(accessToken, file.path);
 
     return response["href"].toString();
   }
@@ -25,7 +25,7 @@ class FileRepository {
   @override
   Future<File> getRandomFile(String playingFolder, String? search, bool? recursive) async {
     final accessToken = (await secureStorage.read(key:"yadplayerAccessToken")).toString();
-    final response = await yadplayerService.getRandomFile(accessToken, playingFolder, search, recursive);
+    final response = await yadplayerService.file.getRandomFile(accessToken, playingFolder, search, recursive);
 
     return response;
   }

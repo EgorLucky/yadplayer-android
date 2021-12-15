@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:yadplayer/ya_d_player_service_api/ya_d_player_service_api.dart';
 
 class Authorize extends StatefulWidget {
   Authorize({Key? key,
@@ -37,15 +38,12 @@ class _AuthorizeState extends State<Authorize> {
     var storage = new FlutterSecureStorage();
 
     if (widget.url != null) {
-        var code = widget.url?.replaceAll("com.egorlucky.yadplayer://getToken?code=", "");
-        var url = Uri.parse("https://yadplayer.herokuapp.com/Auth/getToken?code=${code?.toString()}");
-        var response = await http.get(url);
-        if(response.statusCode != 200) {
-          //show error
-          return;
-        }
+        var code = widget.url?.replaceAll("com.egorlucky.yadplayer://getToken?code=", "") ?? "";
 
-        var jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
+        var yadPlayerService = new YaDPlayerServiceAPI();
+
+        var jsonResponse = await yadPlayerService.auth.getToken(code);
+
         var accessToken = jsonResponse['accessToken'].toString();
         var refreshToken = jsonResponse['refreshToken'].toString();
 

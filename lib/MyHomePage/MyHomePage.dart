@@ -1,14 +1,13 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:http/http.dart' as http;
 import 'package:yadplayer/Authorize/Authorize.dart';
+import 'package:yadplayer/FileBrowser/FileBrowser.dart';
 import 'package:yadplayer/Profile/Profile.dart';
 import 'package:yadplayer/MyHomePage/AuthState.dart';
+import 'package:yadplayer/audio_player/audio_player.dart';
 
 import '../bloc.dart';
 
@@ -35,7 +34,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String _loginUrl = "https://oauth.yandex.ru/authorize?client_id=3b45d777976d49aea146b1d79bcd13d1&response_type=code&redirect_uri=com.egorlucky.yadplayer://getToken";
   FlutterSecureStorage _storage = new FlutterSecureStorage();
   AuthState _authState = AuthState.undefined;
-  bool? _isLogoutExecuted;
+  bool _isLogoutExecuted = false;
   int _selectedIndex = 0;
   static const TextStyle optionStyle = TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
 
@@ -58,15 +57,8 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     _widgetOptions = <Widget>[
-            Text(
-              'Index 0: Home',
-              style: optionStyle,
-            ),
+            FileBrowser(),
             Profile(logoutExecuted: logoutExecuted),
-            Text(
-              'Index 2: School',
-              style: optionStyle,
-            ),
     ];
 
     initAsync();
@@ -109,27 +101,38 @@ class _MyHomePageState extends State<MyHomePage> {
         body: Center(
           // Center is a layout widget. It takes a single child and positions it
           // in the middle of the parent.
+
             child:
             StreamBuilder<String>(
-              stream: _bloc.state,
-              builder: (context, snapshot) {
-                if(_authState == AuthState.undefined/* && _selectedIndex == 0*/)
-                  return Container(
-                      child: Center(
-                        child: Text('checking auth state...'),
-                      ));
-                if(_authState == AuthState.unauthorized){
-                  return Authorize(
-                      url: snapshot.data,
-                      authorized: onAuthorized,
-                      isLogoutExecuted: _isLogoutExecuted,
-                      loginButtonClicked: _loginButtonClicked);
+                  stream: _bloc.state,
+                  builder: (context, snapshot) {
+                    if(_authState == AuthState.undefined)
+                      return Container(
+                          child: Center(
+                            child: Text('checking auth state...'),
+                          ));
+                    if(_authState == AuthState.unauthorized) {
+                      return Authorize(
+                          url: snapshot.data,
+                          authorized: onAuthorized,
+                          isLogoutExecuted: _isLogoutExecuted,
+                          loginButtonClicked: _loginButtonClicked);
+                    }
+                    else if(_authState == AuthState.authorized){
+                      var currentWidget = _widgetOptions?.elementAt(_selectedIndex) ?? Text('error');
+                      return Column(
+                              children: [
+                                Expanded(
+                                    flex: 5,
+                                    child: currentWidget),
+                                Expanded(
+                                    flex: 0,
+                                    child: AudioPlayer())
+                      ]);
+                    }
+                    return Text('error');
                 }
-                else if(_authState == AuthState.authorized)
-                  return _widgetOptions?.elementAt(_selectedIndex) ?? Text('error');
-                return Text('error');
-            }
-        )
+            )
       ),
       bottomNavigationBar: _authState == AuthState.authorized ? BottomNavigationBar(
           items: const <BottomNavigationBarItem>[

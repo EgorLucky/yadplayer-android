@@ -4,26 +4,21 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:url_launcher/url_launcher.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class Authorize extends StatefulWidget {
   Authorize({Key? key,
-      String? url,
-      Function? authorized,
-      bool? isLogoutExecuted,
-      required this.loginButtonClicked}) : super(key: key) {
-    this.url = url;
-    this.authorized = authorized;
-    this.isLogoutExecuted = isLogoutExecuted;
-  }
+      required this.url,
+      required this.authorized,
+      required this.isLogoutExecuted,
+      required this.loginButtonClicked}) : super(key: key);
 
-  String? url;
-  bool? isLogoutExecuted;
+  final String? url;
+  final bool isLogoutExecuted;
 
-  Function? authorized;
-  void Function() loginButtonClicked;
+  final Function authorized;
+  final void Function() loginButtonClicked;
 
   @override
   _AuthorizeState createState() => _AuthorizeState();
@@ -57,7 +52,7 @@ class _AuthorizeState extends State<Authorize> {
         await storage.write(key: "yadplayerAccessToken", value: accessToken);
         await storage.write(key: "yadplayerRefreshToken", value: refreshToken);
 
-        widget.authorized?.call();
+        widget.authorized.call();
     }
   }
 

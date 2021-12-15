@@ -6,19 +6,16 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 class Profile extends StatefulWidget {
-  Profile({Key? key, Function? logoutExecuted}) : super(key: key) {
-    _logoutExecuted = logoutExecuted;
-  }
+  Profile({Key? key, required this.logoutExecuted}) : super(key: key);
 
-  Function? _logoutExecuted;
+  final Function logoutExecuted;
 
   @override
   _ProfileState createState() => _ProfileState();
 }
 
 class _ProfileState extends State<Profile> {
-  _ProfileState(): super() {
-  }
+  _ProfileState(): super();
   dynamic userInfo;
 
 
@@ -36,7 +33,7 @@ class _ProfileState extends State<Profile> {
 
     if (userInfo == null && accessToken != null) {
       var url = Uri.parse("https://yadplayer.herokuapp.com/User/getUserInfo");
-      var response = await http.get(url, headers: {"Authorization": "Bearer ${accessToken}"});
+      var response = await http.get(url, headers: {"Authorization": "Bearer $accessToken"});
       if(response.statusCode != 200) {
         return;
       }
@@ -56,7 +53,7 @@ class _ProfileState extends State<Profile> {
     await storage.delete(key: "yadplayerAccessToken");
     await storage.delete(key: "yadplayerRefreshToken");
 
-    widget._logoutExecuted?.call();
+    widget.logoutExecuted.call();
   }
 
 

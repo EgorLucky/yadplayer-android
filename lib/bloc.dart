@@ -27,6 +27,8 @@ class DeepLinkBloc extends Bloc {
     startUri().then(_onRedirected);
     //Checking broadcast stream, if deep link was clicked in opened appication
     stream.receiveBroadcastStream().listen((d) => _onRedirected(d));
+
+
   }
 
 
@@ -47,6 +49,9 @@ class DeepLinkBloc extends Bloc {
     try {
       return await platform.invokeMethod('initialLink');
     } on PlatformException catch (e) {
+      return "Failed to Invoke: '${e.message}'.";
+    }
+    on MissingPluginException catch(e){
       return "Failed to Invoke: '${e.message}'.";
     }
   }

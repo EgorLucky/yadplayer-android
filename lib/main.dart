@@ -1,12 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:provider/provider.dart';
+import 'package:yadplayer/page_manager.dart';
+import 'package:yadplayer/services/service_locator.dart';
 
 import 'MyHomePage/MyHomePage.dart';
 import 'bloc.dart';
 
-void main() {
-  runApp(MyApp());
+void main() async {
+  try {
+    await setupServiceLocator();
+  }
+  catch(ex) {
+    var exx = ex;
+  }
+
+  try {
+    runApp(MyApp());
+  }
+  catch(ex) {
+    var exx = ex;
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -14,6 +27,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     DeepLinkBloc _bloc = DeepLinkBloc();
+    getIt<PageManager>().init();
+
     return MaterialApp(
       title: 'YaDPlayer',
       theme: ThemeData(
@@ -32,7 +47,7 @@ class MyApp extends StatelessWidget {
           body: Provider<DeepLinkBloc>(
               create: (context) => _bloc,
               dispose: (context, bloc) => bloc.dispose(),
-              child: MyHomePage(title: 'YaDPlayer Home Page')))
+              child: MyHomePage(title: 'YaDPlayer')))
       //home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }

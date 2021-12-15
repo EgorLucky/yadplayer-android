@@ -58,11 +58,6 @@ class FileBrowserState extends State<FileBrowser> {
                         style: ButtonStyle(),
                     ),
                 ),
-                // ElevatedButton(
-                //     onPressed: pageManager.loadParentFolderContent,
-                //     child: Text("../" + currentFolder),
-                //     style: ButtonStyle(),
-                // )
                 Expanded(
                   child: ListView.builder(
                         itemCount: playlist.length,

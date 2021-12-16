@@ -8,10 +8,10 @@ class ServiceController{
   final String host;
   final String name;
 
-  String basePath() => host + "/" + name;
+  String get basePath => host + "/" + name;
 
   Future<T> get<T>({required String functionName, Map<String, String>? queryParameters, Map<String, String>? headers}) async {
-    var url = basePath() + "/" + functionName;
+    var url = basePath + "/" + functionName;
 
     if(queryParameters != null && queryParameters.isNotEmpty){
       url += "?";

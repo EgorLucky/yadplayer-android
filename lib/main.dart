@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:yadplayer/page_manager.dart';
 import 'package:yadplayer/services/service_locator.dart';
 
-import 'MyHomePage/MyHomePage.dart';
+import 'my_home_page/my_home_page.dart';
 import 'bloc.dart';
 
 void main() async {
@@ -48,7 +48,7 @@ class MyApp extends StatelessWidget {
               create: (context) => _bloc,
               dispose: (context, bloc) => bloc.dispose(),
               child: MyHomePage(title: 'YaDPlayer')))
-      //home: MyHomePage(title: 'Flutter Demo Home Page'),
+      //home: my_home_page(title: 'Flutter Demo Home Page'),
     );
   }
 }

@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:yadplayer/Authorize/Authorize.dart';
-import 'package:yadplayer/FileBrowser/FileBrowser.dart';
-import 'package:yadplayer/Profile/Profile.dart';
-import 'package:yadplayer/MyHomePage/AuthState.dart';
+import 'package:yadplayer/Authorize/authorize.dart';
+import 'package:yadplayer/file_browser/file_browser.dart';
+import 'package:yadplayer/profile/profile.dart';
 import 'package:yadplayer/audio_player/audio_player.dart';
+import 'package:yadplayer/my_home_page/auth_state.dart';
 
 import '../bloc.dart';
 
@@ -94,7 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return Scaffold(
         appBar: _authState == AuthState.authorized ? AppBar(
-          // Here we take the value from the MyHomePage object that was created by
+          // Here we take the value from the my_home_page object that was created by
           // the App.build method, and use it to set our appbar title.
           title:  Text(widget.title),
         ) : null,

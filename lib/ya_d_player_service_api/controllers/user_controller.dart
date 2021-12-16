@@ -1,24 +1,15 @@
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-
 import 'package:yadplayer/ya_d_player_service_api/models/user.dart';
+import 'package:yadplayer/ya_d_player_service_api/service_controller.dart';
 
-class UserController{
-  UserController({required this.host});
-
-  String host;
+class UserController extends ServiceController{
+  UserController({required String host}): super(host: host, name: "user");
 
   Future<User> getUserInfo(String accessToken) async {
-    var url = Uri.parse(host + "/User/getUserInfo");
-    var response = await http.get(url, headers: {"Authorization": "Bearer $accessToken"});
-    if(response.statusCode != 200) {
-      throw Error();
-    }
-
-    var jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
+    var jsonResponse = await super.get<Map<String, dynamic>>(
+        functionName: "getUserInfo",
+        headers: {"Authorization": "Bearer $accessToken"});
 
     final result = jsonToUser(jsonResponse);
-
     return result;
   }
 

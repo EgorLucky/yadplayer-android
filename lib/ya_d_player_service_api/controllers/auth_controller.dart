@@ -1,19 +1,12 @@
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import '../service_controller.dart';
 
-class AuthController{
-  AuthController({required this.host});
-
-  String host;
+class AuthController extends ServiceController{
+  AuthController({required String host}) : super(host: host, name: "Auth");
 
   Future<Map<String, dynamic>> getToken(String code) async {
-    var url = Uri.parse(host + "/Auth/getToken?code=${code}");
-    var response = await http.get(url);
-    if(response.statusCode != 200) {
-      throw Error();
-    }
-
-    var jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
+    final jsonResponse = await super.get<Map<String, dynamic>>(
+        functionName: "getToken",
+        queryParameters: { "code": code });
 
     return jsonResponse;
   }

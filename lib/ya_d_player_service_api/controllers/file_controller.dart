@@ -1,20 +1,19 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:yadplayer/ya_d_player_service_api/models/file.dart';
+import 'package:yadplayer/ya_d_player_service_api/service_controller.dart';
 
-class FileController{
-  FileController({required this.host});
-
-  String host;
+class FileController extends ServiceController{
+  FileController({required String host}) : super(host: host, name: "file");
 
   Future<List<File>> getFiles(String accessToken, String path, int page) async {
-    path = Uri.encodeQueryComponent(path);
-    var url = Uri.parse(host + "/file/get?page=$page&parentFolderPath=$path");
-    var response = await http.get(url, headers: {"Authorization": "Bearer $accessToken"});
-    if(response.statusCode != 200) {
-      throw Error();
-    }
-    var jsonResponse = jsonDecode(response.body) as List<dynamic>;
+    var jsonResponse = await super.get<List<dynamic>>(
+            functionName: "get",
+            queryParameters: {
+              "page": page.toString(),
+              "parentFolderPath": path
+            },
+            headers: {"Authorization": "Bearer $accessToken"});
 
     var result = jsonResponse
         .map(jsonToFile)
@@ -24,14 +23,10 @@ class FileController{
   }
 
   Future<Map<String, String>> getAudioUrl(String accessToken, String path) async {
-    path = Uri.encodeQueryComponent(path);
-    var url = Uri.parse(host + "/file/getUrl?path=$path");
-
-    var response = await http.get(url, headers: {"Authorization": "Bearer $accessToken"});
-    if(response.statusCode != 200) {
-      throw Error();
-    }
-    var json = jsonDecode(response.body);
+    var json = await super.get<Map<String, dynamic>>(
+        functionName: "getUrl",
+        queryParameters: { "path": path },
+        headers: {"Authorization": "Bearer $accessToken"});
 
     var result = Map<String, String>();
     result["href"] = json["href"].toString();
@@ -40,14 +35,14 @@ class FileController{
   }
 
   Future<File> getRandomFile(String accessToken, String playingFolder, String? search, bool? recursive) async {
-    playingFolder = Uri.encodeQueryComponent(playingFolder);
-    search = Uri.encodeQueryComponent(search ?? "");
-    var url = Uri.parse(host + "/file/getRandomFile?parentFolderPath=$playingFolder&search=$search&recursive=$recursive");
-    var response = await http.get(url, headers: {"Authorization": "Bearer $accessToken"});
-    if(response.statusCode != 200) {
-      throw Error();
-    }
-    var jsonResponse = jsonDecode(response.body) as dynamic;
+    var jsonResponse = await super.get<dynamic>(
+        functionName: "getRandomFile",
+        queryParameters: {
+          "parentFolderPath": playingFolder,
+          "search": search ?? "",
+          "recursive": recursive == null? "false" : recursive.toString()
+        },
+        headers: {"Authorization": "Bearer $accessToken"});
 
     var result = jsonToFile(jsonResponse);
 

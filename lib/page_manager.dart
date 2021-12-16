@@ -67,7 +67,6 @@ class PageManager {
 
       if(playlist.isEmpty == false) {
         play();
-        playingFolder = currentFolder;
         final oldPlaylistState = playlistNotifier.value;
         final playingTrackFullname = playingFolder.toString() + "/" + playlist.first.title;
         playlistNotifier.value = oldPlaylistState.cloneWithNewPlayingAudio(playingTrackFullname);
@@ -355,7 +354,9 @@ class PageManager {
 
   playAudio(File object) async {
     final songRepository = getIt<FileRepository>();
-    var audioUrl = await songRepository.getAudioUrl(object);
+    final audioUrl = await songRepository.getAudioUrl(object);
+
+    playingFolder = object.parentFolderPath;
 
     if(currentSongTitleNotifier.value != "")
       _audioHandler.removeQueueItemAt(0);

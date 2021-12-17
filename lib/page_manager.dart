@@ -31,6 +31,11 @@ class PageManager {
 
   static const rootPath = "disk:";
 
+  bool get recursive => playlistNotifier.value.recursive;
+  bool Function(File, String) get folderFilter => recursive ?
+        (File f, String path) => f.parentFolderPath.startsWith(path)
+        : (File f, String path) => f.parentFolderPath == path;
+
   // Events: Calls coming from the UI
   void init() async {
     await moveToFolder(path:currentFolder);
@@ -43,13 +48,13 @@ class PageManager {
     _listenToChangesInSong();
   }
 
-  Future<void> _getFiles({String path = "", int page = 1}) async {
-    final playlist = await fileRepository.getFiles(path: path, page: page);
+  Future<void> _getFiles({String path = "", int page = 1, bool recursive = false}) async {
+    final playlist = await fileRepository.getFiles(path: path, page: page, recursive: recursive);
 
     files.addAll(playlist);
 
     var newValue = files
-        .where((e) => e.parentFolderPath == path)
+        .where((e) => folderFilter(e, path))
         .map((e) => e.name.toString())
         .toList();
 
@@ -276,7 +281,7 @@ class PageManager {
   getFolderContent({String path = "", bool isForward = true, int page = 1}) async {
     if(isForward == false || page == 1) {
       var newFiles = files
-                  .where((f) => f.parentFolderPath == path)
+                  .where((f) => folderFilter(f, path))
                   .map((f) => f.name)
                   .toList();
 
@@ -287,7 +292,7 @@ class PageManager {
       }
     }
 
-    await _getFiles(path: path, page: page);
+    await _getFiles(path: path, page: page, recursive: recursive);
   }
 
   void loadParentFolderContent() async {
@@ -341,7 +346,7 @@ class PageManager {
 
     loadNextPageTasks.add(folder);
 
-    var currentPage = foldersLastPages[folder] ?? 1;
+    var currentPage = foldersLastPages[folder] ?? 0;
 
     var nextPage = ++currentPage;
 
@@ -365,5 +370,27 @@ class PageManager {
       title: object.name,
       extras: { "url": audioUrl }
     ));
+  }
+
+  changeRecursive(bool? newValue) async {
+    if(newValue == null ||
+        recursive == newValue ||
+        loadNextPageTasks.length > 0 ||
+        loadNext == true)
+      return;
+    playlistNotifier.value = playlistNotifier.value.cloneWithNewRecursive(newValue);
+
+    files.clear();
+    foldersLastPages.clear();
+
+    loadCurrentFolderNextPage();
+  }
+
+  bool isAudioIsPlayingByTitle(String title) {
+    final playingAudio = playlistNotifier.value.playingAudio;
+    if(recursive == false)
+      return playingAudio != "" && currentFolder + "/" + title == playingAudio;
+    else
+      return playingAudio != "" && playingAudio.startsWith(currentFolder) && playingAudio.endsWith(title);
   }
 }

@@ -45,19 +45,37 @@ class FileBrowserState extends State<FileBrowser> {
           valueListenable: pageManager.playlistNotifier,
           builder: (context, playlistState, _) {
             final playlist = playlistState.playlist;
-            final playingAudio = playlistState.playingAudio;
             final currentFolder = playlistState.currentFolder;
+            final recursive = playlistState.recursive;
 
             return Column(
               children: [
-                FractionallySizedBox(
-                  widthFactor: 1,
-                  child: ElevatedButton(
-                        onPressed: pageManager.loadParentFolderContent,
-                        child: Text("../" + currentFolder),
-                        style: ButtonStyle(),
-                    ),
-                ),
+                Container(
+                    child:Row(
+                        children:[
+                          Expanded(
+                              child: ElevatedButton(
+                                        onPressed: pageManager.loadParentFolderContent,
+                                        child: Text("../" + currentFolder)
+                                      )
+                          ),
+                          Expanded(
+                              flex: 0,
+                              child:
+                                Checkbox(
+                                    value: recursive,
+                                    onChanged: pageManager.changeRecursive
+                                )),
+                          Expanded(
+                              flex: 0,
+                              child: Padding(
+                                  padding: EdgeInsets.only(right: 10),
+                                  child: Text("recursive"))
+                          )
+                        ]
+                    )
+                  )
+                ,
                 Expanded(
                   child: ListView.builder(
                         itemCount: playlist.length,
@@ -66,7 +84,7 @@ class FileBrowserState extends State<FileBrowser> {
                           return ListTile(
                               title: Text('${playlist[index]}'),
                               onTap: () => pageManager.fileTaped(name: playlist[index]),
-                              tileColor: playingAudio != "" && currentFolder + "/" + playlist[index] == playingAudio
+                              tileColor: pageManager.isAudioIsPlayingByTitle(playlist[index])
                                   ? Color.fromARGB(127, 134, 134, 139) : null
                           );
                         },

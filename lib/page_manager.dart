@@ -9,7 +9,8 @@ import 'services/file_repository.dart';
 import 'services/service_locator.dart';
 
 class PageManager {
-  // Listeners: Updates going to the UI
+  static const rootPath = "disk:";
+
   final currentSongTitleNotifier = ValueNotifier<String>('');
   final playlistNotifier = ValueNotifier<PlaylistState>(PlaylistState());
   final progressNotifier = ProgressNotifier();
@@ -19,17 +20,18 @@ class PageManager {
   final isLastSongNotifier = ValueNotifier<bool>(true);
   final isShuffleModeEnabledNotifier = ValueNotifier<bool>(false);
 
-  final _audioHandler = getIt<AudioHandler>();
+
   final files = List<File>.empty(growable: true);
   final folderStack = List<String>.empty(growable: true);
-  String currentFolder = rootPath;
-  String? playingFolder;
   final foldersLastPages = Map<String, int>();
   final loadNextPageTasks = List<String>.empty(growable: true);
 
+  final _audioHandler = getIt<AudioHandler>();
   final fileRepository = getIt<FileRepository>();
 
-  static const rootPath = "disk:";
+  String currentFolder = rootPath;
+  String? playingFolder;
+  bool loadNext = false;
 
   bool get recursive => playlistNotifier.value.recursive;
   bool Function(File, String) get folderFilter => recursive ?
@@ -96,7 +98,6 @@ class PageManager {
     });
   }
 
-  bool loadNext = false;
 
   void _listenToCurrentPosition() {
     AudioService.position.listen((position) async {

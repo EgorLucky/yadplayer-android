@@ -19,5 +19,5 @@ class File
   final String? resourceId;
   final String synchronizationProcessId;
   final String createDateTime;
-  final String lastUpdateDateTime;
+  final String? lastUpdateDateTime;
 }

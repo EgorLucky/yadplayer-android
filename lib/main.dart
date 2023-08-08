@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:yadplayer/page_manager.dart';
@@ -11,14 +13,14 @@ void main() async {
     await setupServiceLocator();
   }
   catch(ex) {
-    var exx = ex;
+    log('Failed to setup service locator: ' + ex.toString());
   }
 
   try {
     runApp(MyApp());
   }
   catch(ex) {
-    var exx = ex;
+    log('Failed to start app: ' + ex.toString());
   }
 }
 

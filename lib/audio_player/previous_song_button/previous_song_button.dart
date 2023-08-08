@@ -14,7 +14,7 @@ class PreviousSongButton extends StatelessWidget {
       builder: (_, isFirst, __) {
         return IconButton(
           icon: Icon(Icons.skip_previous),
-          onPressed: (isFirst) ? null : pageManager.previous,
+          onPressed: (isFirst) ? null : pageManager.previousAudio,
         );
       },
     );

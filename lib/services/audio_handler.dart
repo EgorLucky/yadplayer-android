@@ -1,5 +1,15 @@
 import 'package:audio_service/audio_service.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:yadplayer/services/file_handler.dart';
+import 'package:yadplayer/services/service_locator.dart';
+
+import '../notifiers/play_button_notifier.dart';
+import '../notifiers/progress_notifier.dart';
+import '../notifiers/repeat_button_notifier.dart';
+import '../playlist_state.dart';
+import '../ya_d_player_service_api/models/file.dart';
+import 'file_repository.dart';
 
 Future<AudioHandler> initAudioService() async {
   return await AudioService.init(
@@ -16,6 +26,8 @@ Future<AudioHandler> initAudioService() async {
 class MyAudioHandler extends BaseAudioHandler {
   final _player = AudioPlayer();
   final _playlist = ConcatenatingAudioSource(children: []);
+
+  final fileRepository = getIt<FileRepository>();
 
   MyAudioHandler() {
     _loadEmptyPlaylist();
@@ -76,9 +88,9 @@ class MyAudioHandler extends BaseAudioHandler {
       var index = _player.currentIndex;
       final newQueue = queue.value;
       if (index == null || newQueue.isEmpty) return;
-      if (_player.shuffleModeEnabled) {
-        index = _player.shuffleIndices![index];
-      }
+      // if (_player.shuffleModeEnabled) {
+      //   index = _player.shuffleIndices![index];
+      // }
       final oldMediaItem = newQueue[index];
       final newMediaItem = oldMediaItem.copyWith(duration: duration);
       newQueue[index] = newMediaItem;
@@ -142,11 +154,12 @@ class MyAudioHandler extends BaseAudioHandler {
   @override
   Future<void> removeQueueItemAt(int index) async {
     // manage Just Audio
-    _playlist.removeAt(index);
+    await _playlist.removeAt(index);
 
     // notify system
-    final newQueue = queue.value..removeAt(index);
-    queue.add(newQueue);
+
+    final mediaItemList = queue.value..removeAt(index);
+    queue.add(mediaItemList);
   }
 
   @override
@@ -159,19 +172,16 @@ class MyAudioHandler extends BaseAudioHandler {
   Future<void> seek(Duration position) => _player.seek(position);
 
   @override
-  Future<void> skipToQueueItem(int index) async {
-    if (index < 0 || index >= queue.value.length) return;
-    if (_player.shuffleModeEnabled) {
-      index = _player.shuffleIndices![index];
-    }
-    _player.seek(Duration.zero, index: index);
+  Future<void> skipToNext() {
+    var fileHandler = getIt<FileHandler>();
+    return fileHandler.nextAudio();
   }
 
   @override
-  Future<void> skipToNext() => _player.seekToNext();
-
-  @override
-  Future<void> skipToPrevious() => _player.seekToPrevious();
+  Future<void> skipToPrevious() {
+    var fileHandler = getIt<FileHandler>();
+    return fileHandler.previousAudio();
+  }
 
   @override
   Future<void> setRepeatMode(AudioServiceRepeatMode repeatMode) async {

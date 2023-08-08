@@ -14,7 +14,7 @@ class NextSongButton extends StatelessWidget {
       builder: (_, isLast, __) {
         return IconButton(
           icon: Icon(Icons.skip_next),
-          onPressed: (isLast) ? null : pageManager.next,
+          onPressed: (isLast) ? null : pageManager.nextAudio,
         );
       },
     );

@@ -80,9 +80,10 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _loginButtonClicked() async {
-    if(await canLaunch(_loginUrl))
-      await launch(_loginUrl);
-    else throw 'Could not launch $_loginUrl';
+    var loginUri = Uri.parse(_loginUrl);
+    //if(await canLaunchUrl(uri)) //always returns false on miui 14
+      await launchUrl(loginUri, mode: LaunchMode.externalApplication);
+    //else throw 'Could not launch $_loginUrl';
     setState(() {
       _isLogoutExecuted = false;
     });

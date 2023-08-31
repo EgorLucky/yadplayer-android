@@ -21,11 +21,14 @@ class FileController extends ServiceController{
     return result;
   }
 
-  Future<Map<String, String>> getAudioUrl(String accessToken, String path) async {
+  Future<Map<String, String>> getAudioUrl(String accessToken, String oauthToken, String path) async {
     var json = await super.get<Map<String, dynamic>>(
         functionName: "getUrl",
         queryParameters: { "path": path },
-        headers: {"Authorization": "Bearer $accessToken"});
+        headers: {
+          "Authorization": "Bearer $accessToken",
+          "oauth-token": oauthToken
+        });
 
     var result = Map<String, String>();
     result["href"] = json["href"].toString();

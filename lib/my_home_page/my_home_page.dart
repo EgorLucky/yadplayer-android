@@ -31,7 +31,7 @@ class MyHomePage extends StatefulWidget {
 
 
 class _MyHomePageState extends State<MyHomePage> {
-  String _loginUrl = "https://oauth.yandex.ru/authorize?client_id=3b45d777976d49aea146b1d79bcd13d1&response_type=code&redirect_uri=com.egorlucky.yadplayer://getToken";
+  String _loginUrl = "http://egorluckydevdomain.ru:3003/auth/authorize?returnUrl=com.egorlucky.yadplayer://getToken";
   FlutterSecureStorage _storage = new FlutterSecureStorage();
   AuthState _authState = AuthState.undefined;
   bool _isLogoutExecuted = false;

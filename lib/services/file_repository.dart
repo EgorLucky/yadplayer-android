@@ -15,7 +15,8 @@ class FileRepository {
 
   Future<String?> getAudioUrl(File file) async {
     var accessToken = (await secureStorage.read(key:"yadplayerAccessToken")).toString();
-    var response = await yadplayerService.file.getAudioUrl(accessToken, file.path);
+    var oauthToken = (await secureStorage.read(key:"yadplayerOauthToken")).toString();
+    var response = await yadplayerService.file.getAudioUrl(accessToken, oauthToken, file.path);
 
     return response["href"].toString();
   }

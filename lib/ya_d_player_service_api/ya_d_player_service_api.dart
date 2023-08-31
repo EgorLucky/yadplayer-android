@@ -7,7 +7,7 @@ import 'package:yadplayer/ya_d_player_service_api/controllers/user_controller.da
 class YaDPlayerServiceAPI{
   YaDPlayerServiceAPI();
 
-  static final host = "https://yadplayer.herokuapp.com";
+  static final host = "http://egorluckydevdomain.ru:3003";
 
   FileController file = new FileController(host: host);
   AuthController auth = new AuthController(host: host);

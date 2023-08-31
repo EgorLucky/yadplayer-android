@@ -44,10 +44,12 @@ class _AuthorizeState extends State<Authorize> {
 
         var jsonResponse = await yadPlayerService.auth.getToken(code);
 
-        var accessToken = jsonResponse['accessToken'].toString();
-        var refreshToken = jsonResponse['refreshToken'].toString();
+        var accessToken = jsonResponse['access_token'].toString();
+        var oauthToken = jsonResponse['oauth_token'].toString();
+        var refreshToken = jsonResponse['refresh_token'].toString();
 
         await storage.write(key: "yadplayerAccessToken", value: accessToken);
+        await storage.write(key: "yadplayerOauthToken", value: oauthToken);
         await storage.write(key: "yadplayerRefreshToken", value: refreshToken);
 
         widget.authorized.call();

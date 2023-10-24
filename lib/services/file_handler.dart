@@ -107,8 +107,8 @@ class FileHandler {
   void _updateSkipButtons() {
     final playingAudio = files
         .where((f) => _audioHandler.mediaItem.value?.title == f.name
-        && f.parentFolderPath == playingFolder);
-    final playlist = files.where((f) => f.parentFolderPath == playingFolder);
+        && folderFilter(f, playingFolder ?? ""));
+    final playlist = files.where((f) => folderFilter(f, playingFolder ?? ""));
     if (playlist.length < 2 || playingAudio.isEmpty) {
       isFirstSongNotifier.value = true;
       //isLastSongNotifier.value = true;
@@ -206,7 +206,7 @@ class FileHandler {
     if(playingFolder == null)
       return null;
 
-    var nextAudio = await _fileRepository.getRandomFile(playingFolder ?? "", "", false);
+    var nextAudio = await _fileRepository.getRandomFile(playingFolder ?? "", "", recursive);
 
     return nextAudio;
   }
@@ -236,7 +236,7 @@ class FileHandler {
     final songRepository = getIt<FileRepository>();
     final audioUrl = await songRepository.getAudioUrl(object);
 
-    playingFolder = object.parentFolderPath;
+    playingFolder = folderStack.last;
 
     var audioQueueIsNotEmpty = _audioHandler.queue.value.isNotEmpty;
     //if(currentSongTitleNotifier.value != "")

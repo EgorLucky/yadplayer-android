@@ -10,6 +10,7 @@ import 'package:yadplayer/audio_player/audio_player.dart';
 import 'package:yadplayer/my_home_page/auth_state.dart';
 
 import '../bloc.dart';
+import '../sync/sync.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key? key, required this.title}) : super(key: key);
@@ -58,6 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     _widgetOptions = <Widget>[
             FileBrowser(),
+            Sync(),
             Profile(logoutExecuted: logoutExecuted),
     ];
 
@@ -141,6 +143,9 @@ class _MyHomePageState extends State<MyHomePage> {
               icon: Icon(Icons.home),
               label: 'Home',
             ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.sync),
+              label: "Sync"),
             BottomNavigationBarItem(
               icon: Icon(Icons.account_circle),
               label: 'Account',

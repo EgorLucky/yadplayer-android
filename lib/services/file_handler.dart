@@ -364,7 +364,7 @@ class FileHandler {
     files.clear();
     foldersLastPages.clear();
 
-    loadCurrentFolderNextPage();
+    getFolderContent(path: currentFolder);
   }
 
   bool isAudioIsPlayingByTitle(String title) {

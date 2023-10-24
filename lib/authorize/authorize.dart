@@ -80,6 +80,6 @@ class _AuthorizeState extends State<Authorize> {
             child: Padding(
                 padding: EdgeInsets.all(20.0),
                 child: Text('Getting access token via code....',
-                    style: Theme.of(context).textTheme.headline6))));
+                    style: Theme.of(context).textTheme.titleLarge))));
   }
 }

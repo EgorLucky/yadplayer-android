@@ -1,9 +1,5 @@
-
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:yadplayer/ya_d_player_service_api/ya_d_player_service_api.dart';
@@ -38,7 +34,8 @@ class _AuthorizeState extends State<Authorize> {
     var storage = new FlutterSecureStorage();
 
     if (widget.url != null) {
-        var code = widget.url?.replaceAll("com.egorlucky.yadplayer://getToken?code=", "") ?? "";
+        final uri = Uri.parse(widget.url.toString());
+        var code = uri.queryParameters["code"].toString();
 
         var yadPlayerService = new YaDPlayerServiceAPI();
 

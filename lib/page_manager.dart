@@ -1,12 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:yadplayer/services/file_handler.dart';
-import 'package:yadplayer/ya_d_player_service_api/models/file.dart';
 import 'package:audio_service/audio_service.dart';
 import 'package:yadplayer/playlist_state.dart';
 import 'notifiers/play_button_notifier.dart';
 import 'notifiers/progress_notifier.dart';
 import 'notifiers/repeat_button_notifier.dart';
-import 'services/file_repository.dart';
 import 'services/service_locator.dart';
 
 class PageManager {

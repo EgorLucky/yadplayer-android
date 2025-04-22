@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
@@ -37,7 +36,6 @@ class _MyHomePageState extends State<MyHomePage> {
   AuthState _authState = AuthState.undefined;
   bool _isLogoutExecuted = false;
   int _selectedIndex = 0;
-  static const TextStyle optionStyle = TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
 
   void logoutExecuted(){
     setState(() {

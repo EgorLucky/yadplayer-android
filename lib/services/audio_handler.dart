@@ -1,14 +1,8 @@
 import 'package:audio_service/audio_service.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:yadplayer/services/file_handler.dart';
 import 'package:yadplayer/services/service_locator.dart';
 
-import '../notifiers/play_button_notifier.dart';
-import '../notifiers/progress_notifier.dart';
-import '../notifiers/repeat_button_notifier.dart';
-import '../playlist_state.dart';
-import '../ya_d_player_service_api/models/file.dart';
 import 'file_repository.dart';
 
 Future<AudioHandler> initAudioService() async {

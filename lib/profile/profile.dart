@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:yadplayer/ya_d_player_service_api/models/user.dart';
 import 'package:yadplayer/ya_d_player_service_api/ya_d_player_service_api.dart';
+import 'package:yadplayer/services/service_locator.dart';
 
 class Profile extends StatefulWidget {
   Profile({Key? key, required this.logoutExecuted}) : super(key: key);
@@ -31,7 +32,7 @@ class _ProfileState extends State<Profile> {
     var accessToken = await storage.read(key: "yadplayerAccessToken");
 
     if (userInfo == null && accessToken != null) {
-      var yadPlayerService = new YaDPlayerServiceAPI();
+      var yadPlayerService = getIt<YaDPlayerServiceAPI>();
 
       var jsonResponse = await yadPlayerService.user.getUserInfo(accessToken);
 

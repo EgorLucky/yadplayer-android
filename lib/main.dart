@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:yadplayer/page_manager.dart';
 import 'package:yadplayer/services/service_locator.dart';
@@ -9,6 +10,7 @@ import 'my_home_page/my_home_page.dart';
 import 'bloc.dart';
 
 void main() async {
+  await dotenv.load(fileName: ".env");
   try {
     await setupServiceLocator();
   }

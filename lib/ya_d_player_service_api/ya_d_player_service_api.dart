@@ -6,12 +6,19 @@ import 'package:yadplayer/ya_d_player_service_api/controllers/sync_controller.da
 import 'package:yadplayer/ya_d_player_service_api/controllers/user_controller.dart';
 
 class YaDPlayerServiceAPI{
-  YaDPlayerServiceAPI();
+  final String apiHost;
 
-  static final host = "http://egorluckydevdomain.ru:3003";
+  late FileController file;
+  late AuthController auth;
+  late UserController user;
+  late SyncController sync;
 
-  FileController file = new FileController(host: host);
-  AuthController auth = new AuthController(host: host);
-  UserController user = new UserController(host: host);
-  SyncController sync = new SyncController(host: host);
+  YaDPlayerServiceAPI({required this.apiHost}) {
+    file = new FileController(host: apiHost);
+    auth = new AuthController(host: apiHost);
+    user = new UserController(host: apiHost);
+    sync = new SyncController(host: apiHost);
+  }
+
+
 }

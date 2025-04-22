@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import 'package:yadplayer/key_storage.dart';
+import 'package:yadplayer/services/service_locator.dart';
 import 'package:yadplayer/ya_d_player_service_api/ya_d_player_service_api.dart';
 
 import '../ya_d_player_service_api/models/sync_process.dart';
@@ -41,7 +42,7 @@ class _SyncState extends State<Sync> {
     var accessToken = await KeyStorage.getAccessToken();
 
     if (accessToken != null) {
-      var yadPlayerService = new YaDPlayerServiceAPI();
+      var yadPlayerService = getIt<YaDPlayerServiceAPI>();
 
       var syncProcesses = await yadPlayerService.sync.getSyncs(accessToken, page);
 
@@ -63,7 +64,7 @@ class _SyncState extends State<Sync> {
     var oauthToken = (await KeyStorage.getOauthToken()).toString();
     var refreshToken = (await KeyStorage.getRefreshToken()).toString();
 
-    var yadPlayerService = new YaDPlayerServiceAPI();
+    var yadPlayerService = getIt<YaDPlayerServiceAPI>();
     await yadPlayerService.sync.start(accessToken, oauthToken, refreshToken);
 
     await loadSyncProcesses(1);

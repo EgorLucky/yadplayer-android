@@ -1,9 +1,10 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:yadplayer/services/service_locator.dart';
 import 'package:yadplayer/ya_d_player_service_api/ya_d_player_service_api.dart';
 import 'package:yadplayer/ya_d_player_service_api/models/file.dart';
 
 class FileRepository {
-  var yadplayerService = new YaDPlayerServiceAPI();
+  var yadplayerService = getIt<YaDPlayerServiceAPI>();
   var secureStorage = new FlutterSecureStorage();
 
   Future<List<File>> getFiles({String path = "", int page = 1, bool recursive = false}) async {

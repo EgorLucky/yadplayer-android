@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:yadplayer/ya_d_player_service_api/ya_d_player_service_api.dart';
+import 'package:yadplayer/services/service_locator.dart';
 
 class Authorize extends StatefulWidget {
   Authorize({Key? key,
@@ -37,7 +38,7 @@ class _AuthorizeState extends State<Authorize> {
         final uri = Uri.parse(widget.url.toString());
         var code = uri.queryParameters["code"].toString();
 
-        var yadPlayerService = new YaDPlayerServiceAPI();
+        var yadPlayerService = getIt<YaDPlayerServiceAPI>();
 
         var jsonResponse = await yadPlayerService.auth.getToken(code);
 

@@ -4,13 +4,14 @@ import 'package:yadplayer/ya_d_player_service_api/service_controller.dart';
 class FileController extends ServiceController{
   FileController({required String host}) : super(host: host, name: "file");
 
-  Future<List<File>> getFiles(String accessToken, String path, int page, bool recursive) async {
+  Future<List<File>> getFiles(String accessToken, String path, int page, bool recursive, int take) async {
     var jsonResponse = await super.get<List<dynamic>>(
             functionName: "get",
             queryParameters: {
               "page": page.toString(),
               "parentFolderPath": path,
-              "recursive" : recursive.toString()
+              "recursive" : recursive.toString(),
+              "take": take.toString()
             },
             headers: {"Authorization": "Bearer $accessToken"});
 

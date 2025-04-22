@@ -8,7 +8,7 @@ class FileRepository {
 
   Future<List<File>> getFiles({String path = "", int page = 1, bool recursive = false}) async {
       var accessToken = (await secureStorage.read(key:"yadplayerAccessToken")).toString();
-      var response = await yadplayerService.file.getFiles(accessToken, path, page, recursive);
+      var response = await yadplayerService.file.getFiles(accessToken, path, page, recursive, 300);
 
       return response;
   }

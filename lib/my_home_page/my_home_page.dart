@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -31,7 +32,7 @@ class MyHomePage extends StatefulWidget {
 
 
 class _MyHomePageState extends State<MyHomePage> {
-  String _loginUrl = "http://egorluckydevdomain.ru:3003/auth/authorize?returnUrl=com.egorlucky.yadplayer://getToken";
+  var _loginUrl = "${dotenv.get('API_HOST')}/auth/authorize?returnUrl=com.egorlucky.yadplayer://getToken";
   FlutterSecureStorage _storage = new FlutterSecureStorage();
   AuthState _authState = AuthState.undefined;
   bool _isLogoutExecuted = false;

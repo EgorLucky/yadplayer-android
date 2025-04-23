@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:yadplayer/key_storage.dart';
 import 'package:yadplayer/ya_d_player_service_api/ya_d_player_service_api.dart';
 import 'package:yadplayer/services/service_locator.dart';
 
@@ -31,7 +32,7 @@ class _AuthorizeState extends State<Authorize> {
   }
 
   void initAsync() async {
-    var storage = new FlutterSecureStorage();
+    var storage = getIt<KeyStorage>();
 
     if (widget.url != null) {
         final uri = Uri.parse(widget.url.toString());
@@ -45,9 +46,9 @@ class _AuthorizeState extends State<Authorize> {
         var oauthToken = jsonResponse['oauth_token'].toString();
         var refreshToken = jsonResponse['refresh_token'].toString();
 
-        await storage.write(key: "yadplayerAccessToken", value: accessToken);
-        await storage.write(key: "yadplayerOauthToken", value: oauthToken);
-        await storage.write(key: "yadplayerRefreshToken", value: refreshToken);
+        await storage.setAccessToken(accessToken);
+        await storage.setOauthToken(oauthToken);
+        await storage.setRefreshToken(refreshToken);
 
         widget.authorized.call();
     }

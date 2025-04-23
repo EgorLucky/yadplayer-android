@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:yadplayer/key_storage.dart';
 import 'package:yadplayer/ya_d_player_service_api/models/user.dart';
 import 'package:yadplayer/ya_d_player_service_api/ya_d_player_service_api.dart';
 import 'package:yadplayer/services/service_locator.dart';
@@ -17,6 +18,7 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   _ProfileState(): super();
   User? userInfo;
+  var storage = getIt<KeyStorage>();
 
 
   @override
@@ -27,9 +29,8 @@ class _ProfileState extends State<Profile> {
   }
 
   void initAsync() async {
-    var storage = new FlutterSecureStorage();
 
-    var accessToken = await storage.read(key: "yadplayerAccessToken");
+    var accessToken = await storage.getAccessToken();
 
     if (userInfo == null && accessToken != null) {
       var yadPlayerService = getIt<YaDPlayerServiceAPI>();
@@ -44,10 +45,9 @@ class _ProfileState extends State<Profile> {
   }
 
   void _logoutPressed() async {
-    var storage = new FlutterSecureStorage();
 
-    await storage.delete(key: "yadplayerAccessToken");
-    await storage.delete(key: "yadplayerRefreshToken");
+    await storage.setAccessToken(null);
+    await storage.setRefreshToken(null);
 
     widget.logoutExecuted.call();
   }

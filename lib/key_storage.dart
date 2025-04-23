@@ -7,27 +7,34 @@ class KeyStorage {
   static const String oauthTokenKey = 'yadplayerOauthToken';
   static const String refreshTokenKey = 'yadplayerRefreshToken';
 
-  static Future<String?> getAccessToken() async {
+  Future<String?> getAccessToken() async {
     return await storage.read(key: accessTokenKey);
   }
 
-  static Future setAccessToken(String accessToken) async {
-    await storage.write(key: accessTokenKey, value: accessToken);
+  Future setAccessToken(String? accessToken) async {
+    await setValue(accessTokenKey, accessToken);
   }
 
-  static Future<String?> getOauthToken() async {
+  Future<String?> getOauthToken() async {
     return await storage.read(key: oauthTokenKey);
   }
 
-  static Future setOauthToken(String oauthToken) async {
-    await storage.write(key: oauthTokenKey, value: oauthToken);
+  Future setOauthToken(String? oauthToken) async {
+    await setValue(oauthTokenKey, oauthToken);
   }
 
-  static Future<String?> getRefreshToken() async {
+  Future<String?> getRefreshToken() async {
     return await storage.read(key: refreshTokenKey);
   }
 
-  static Future setRefreshToken(String oauthToken) async {
-    await storage.write(key: refreshTokenKey, value: oauthToken);
+  Future setRefreshToken(String? refreshToken) async {
+    await setValue(refreshTokenKey, refreshToken);
+  }
+
+  Future setValue(String key, String? value) async {
+    if (value == null)
+      await storage.delete(key: key);
+    else
+      await storage.write(key: key, value: value);
   }
 }

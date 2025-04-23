@@ -5,9 +5,11 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:yadplayer/Authorize/authorize.dart';
 import 'package:yadplayer/file_browser/file_browser.dart';
+import 'package:yadplayer/key_storage.dart';
 import 'package:yadplayer/profile/profile.dart';
 import 'package:yadplayer/audio_player/audio_player.dart';
 import 'package:yadplayer/my_home_page/auth_state.dart';
+import 'package:yadplayer/services/service_locator.dart';
 
 import '../bloc.dart';
 import '../sync/sync.dart';
@@ -33,7 +35,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   var _loginUrl = "${dotenv.get('API_HOST')}/auth/authorize?returnUrl=com.egorlucky.yadplayer://getToken";
-  FlutterSecureStorage _storage = new FlutterSecureStorage();
+  var _storage = getIt<KeyStorage>();
   AuthState _authState = AuthState.undefined;
   bool _isLogoutExecuted = false;
   int _selectedIndex = 0;
@@ -67,10 +69,10 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void initAsync() async {
-    var isAuthorized = await _storage.containsKey(key: "yadplayerAccessToken");
+    var accessToken = await _storage.getAccessToken();
 
     setState(() {
-      _authState = isAuthorized? AuthState.authorized: AuthState.unauthorized;
+      _authState = accessToken != null ? AuthState.authorized: AuthState.unauthorized;
     });
   }
 

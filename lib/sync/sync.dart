@@ -20,6 +20,7 @@ class _SyncState extends State<Sync> {
   _SyncState(): super();
   List<SyncProcess> syncProcesses = List.empty();
   var isListLoaded = false;
+  var storage = getIt<KeyStorage>();
 
   @override
   void initState() {
@@ -39,7 +40,8 @@ class _SyncState extends State<Sync> {
   }
 
   Future loadSyncProcesses(int page) async {
-    var accessToken = await KeyStorage.getAccessToken();
+
+    var accessToken = await storage.getAccessToken();
 
     if (accessToken != null) {
       var yadPlayerService = getIt<YaDPlayerServiceAPI>();
@@ -60,9 +62,9 @@ class _SyncState extends State<Sync> {
       return;
     }
 
-    var accessToken = (await KeyStorage.getAccessToken()).toString();
-    var oauthToken = (await KeyStorage.getOauthToken()).toString();
-    var refreshToken = (await KeyStorage.getRefreshToken()).toString();
+    var accessToken = (await storage.getAccessToken()).toString();
+    var oauthToken = (await storage.getOauthToken()).toString();
+    var refreshToken = (await storage.getRefreshToken()).toString();
 
     var yadPlayerService = getIt<YaDPlayerServiceAPI>();
     await yadPlayerService.sync.start(accessToken, oauthToken, refreshToken);

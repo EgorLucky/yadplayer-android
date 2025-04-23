@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:yadplayer/Authorize/authorize.dart';
 import 'package:yadplayer/file_browser/file_browser.dart';
 import 'package:yadplayer/key_storage.dart';
+import 'package:yadplayer/page_manager.dart';
 import 'package:yadplayer/profile/profile.dart';
 import 'package:yadplayer/audio_player/audio_player.dart';
 import 'package:yadplayer/my_home_page/auth_state.dart';
 import 'package:yadplayer/services/service_locator.dart';
+import 'package:yadplayer/ya_d_player_service_api/service_controller.dart';
 
 import '../bloc.dart';
 import '../sync/sync.dart';
+import '../ya_d_player_service_api/models/user.dart';
+import '../ya_d_player_service_api/ya_d_player_service_api.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key? key, required this.title}) : super(key: key);
@@ -36,6 +39,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   var _loginUrl = "${dotenv.get('API_HOST')}/auth/authorize?returnUrl=com.egorlucky.yadplayer://getToken";
   var _storage = getIt<KeyStorage>();
+  var apiService = getIt<YaDPlayerServiceAPI>();
   AuthState _authState = AuthState.undefined;
   bool _isLogoutExecuted = false;
   int _selectedIndex = 0;
@@ -52,6 +56,7 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _authState = AuthState.authorized;
     });
+    getIt<PageManager>().init();
   }
 
   List<Widget>? _widgetOptions;
@@ -70,10 +75,28 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void initAsync() async {
     var accessToken = await _storage.getAccessToken();
+    User? user;
+    try {
+      user = accessToken != null
+          ? await apiService.user.getUserInfo(accessToken)
+          : null;
+    }
+    on UnauthorizedError
+    catch (error) {
+      //ignore
+    }
+    on Error
+    catch(error) {
+      //think what to do
+    }
 
     setState(() {
-      _authState = accessToken != null ? AuthState.authorized: AuthState.unauthorized;
+      _authState = user != null ? AuthState.authorized: AuthState.unauthorized;
     });
+
+    if (_authState == AuthState.authorized) {
+      getIt<PageManager>().init();
+    }
   }
 
   void _onItemTapped(int index) {
@@ -122,7 +145,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           isLogoutExecuted: _isLogoutExecuted,
                           loginButtonClicked: _loginButtonClicked);
                     }
-                    else if(_authState == AuthState.authorized){
+                    else if(_authState == AuthState.authorized) {
                       var currentWidget = _widgetOptions?.elementAt(_selectedIndex) ?? Text('error');
                       return Column(
                               children: [

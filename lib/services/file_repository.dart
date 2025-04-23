@@ -24,7 +24,7 @@ class FileRepository {
   }
 
   Future<File> getRandomFile(String playingFolder, String? search, bool? recursive) async {
-    final accessToken = (await storage..getAccessToken()).toString();
+    final accessToken = (await storage.getAccessToken()).toString();
     final response = await yadplayerService.file.getRandomFile(accessToken, playingFolder, search, recursive);
 
     return response;

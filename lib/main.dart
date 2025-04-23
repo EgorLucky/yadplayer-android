@@ -31,7 +31,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     DeepLinkBloc _bloc = DeepLinkBloc();
-    getIt<PageManager>().init();
 
     return MaterialApp(
       title: 'YaDPlayer',

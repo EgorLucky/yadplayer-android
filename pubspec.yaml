@@ -38,6 +38,8 @@ dependencies:
   audio_service: ^0.18.9
   intl: ^0.18.1
   flutter_dotenv: ^5.2.1
+  sqflite: any
+  path_provider: any
 
 dev_dependencies:
   flutter_test:

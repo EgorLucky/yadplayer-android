@@ -1,6 +1,7 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:yadplayer/services/file_handler.dart';
+import 'package:yadplayer/services/logger.dart';
 import 'package:yadplayer/services/service_locator.dart';
 
 import 'file_repository.dart';
@@ -22,6 +23,7 @@ class MyAudioHandler extends BaseAudioHandler {
   final _playlist = ConcatenatingAudioSource(children: []);
 
   final fileRepository = getIt<FileRepository>();
+  final _logger = getIt<Logger>();
 
   MyAudioHandler() {
     _loadEmptyPlaylist();
@@ -35,7 +37,7 @@ class MyAudioHandler extends BaseAudioHandler {
     try {
       await _player.setAudioSource(_playlist);
     } catch (e) {
-      print("Error: $e");
+      _logger.log("Error: $e");
     }
   }
 

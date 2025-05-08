@@ -2,25 +2,48 @@ import 'package:flutter/foundation.dart';
 import 'package:yadplayer/services/file_handler.dart';
 import 'package:audio_service/audio_service.dart';
 import 'package:yadplayer/playlist_state.dart';
+import 'package:yadplayer/services/logger.dart';
 import 'notifiers/play_button_notifier.dart';
 import 'notifiers/progress_notifier.dart';
 import 'notifiers/repeat_button_notifier.dart';
-import 'services/service_locator.dart';
+import 'package:yadplayer/services/service_locator.dart';
 
 class PageManager {
   final _audioHandler = getIt<AudioHandler>();
   final _fileHandler = getIt<FileHandler>();
+  final _logger = getIt<Logger>();
 
   // Events: Calls coming from the UI
   void init() async {
+    _logger.log("page_manager.init: executing");
     await _fileHandler.moveToFolder();
-    //_fileCache._listenToChangesInCurrentFolder(currentFolder);
+
+    _logger.log("page_manager.init: executed _fileHandler.moveToFolder()");
+
     _fileHandler.listenToChangesInPlaylist();
+
+    _logger.log("page_manager.init: executed _fileHandler.listenToChangesInPlaylist()");
+
     _fileHandler.listenToPlaybackState();
+
+    _logger.log("page_manager.init: executed _fileHandler.listenToPlaybackState()");
+
     _fileHandler.listenToCurrentPosition();
+
+    _logger.log("page_manager.init: executed _fileHandler.listenToCurrentPosition()");
+
     _fileHandler.listenToBufferedPosition();
+
+    _logger.log("page_manager.init: executed _fileHandler.listenToBufferedPosition()");
+
     _fileHandler.listenToTotalDuration();
+
+    _logger.log("page_manager.init: executed _fileHandler.listenToTotalDuration()");
+
     _fileHandler.listenToChangesInSong();
+
+    _logger.log("page_manager.init: executed _fileHandler.listenToChangesInSong()");
+    _logger.log("page_manager.init: executed");
   }
 
   ValueNotifier<bool> get isFirstSongNotifier => _fileHandler.isFirstSongNotifier;

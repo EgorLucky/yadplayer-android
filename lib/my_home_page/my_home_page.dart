@@ -86,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
       //ignore
     }
     on Error
-    catch(error) {
+    catch (error) {
       //think what to do
     }
 

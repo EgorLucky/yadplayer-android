@@ -1,5 +1,6 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:yadplayer/services/logger.dart';
 import 'package:yadplayer/services/service_locator.dart';
 
 import '../notifiers/play_button_notifier.dart';
@@ -12,6 +13,7 @@ import 'file_repository.dart';
 class FileHandler {
   final _fileRepository = getIt<FileRepository>();
   final _audioHandler = getIt<AudioHandler>();
+  final _logger = getIt<Logger>();
 
   static const rootPath = "disk:";
   final files = List<File>.empty(growable: true);
@@ -139,11 +141,17 @@ class FileHandler {
     AudioService.position.listen((position) async {
       final oldState = progressNotifier.value;
       final total = oldState.total;
+      
+      _logger.log("listening to current position");
 
-      if(position >= total && total != Duration.zero && !loadNext){
+      if(position >= total && total != Duration.zero && !loadNext) {
         loadNext = true;
+        _logger.log("calling nextAudio position = $position total = $total loadNext = $loadNext");
         await nextAudio();
         loadNext = false;
+      }
+      else {
+        _logger.log("nextAudio was not called position = $position total = $total loadNext = $loadNext");
       }
 
       progressNotifier.value = ProgressBarState(
@@ -155,21 +163,27 @@ class FileHandler {
   }
 
   Future nextAudio() async {
-    if(playingFolder == null)
+    if(playingFolder == null) {
+      _logger.log("fileHandler.nextAudio: playingFolder is null, returning");
       return;
+    }
 
     File? nextAudio;
 
     if(this.isShuffleModeEnabledNotifier.value == false)
     {
+      _logger.log("fileHandler.nextAudio: calling nextByLinearOrder");
       nextAudio = await nextByLinearOrder();
     }
-    else{
+    else {
+      _logger.log("fileHandler.nextAudio: calling nextByRandomOrder");
       nextAudio = await nextByRandomOrder();
     }
 
     if(nextAudio == null)
       return null;
+
+    _logger.log("fileHandler.nextAudio: calling playAudio");
 
     playAudio(nextAudio);
   }
@@ -202,12 +216,15 @@ class FileHandler {
     return nextAudio;
   }
 
-  Future<File?> nextByRandomOrder() async  {
-    if(playingFolder == null)
+  Future<File?> nextByRandomOrder() async {
+    if(playingFolder == null) {
+      _logger.log("fileHandler.nextByRandomOrder: playingFolder is null, returning");
       return null;
+    }
 
+    _logger.log("fileHandler.nextByRandomOrder: calling _fileRepository.getRandomFile, playingFolder = $playingFolder recursive = $recursive");
     var nextAudio = await _fileRepository.getRandomFile(playingFolder ?? "", "", recursive);
-
+    _logger.log("fileHandler.nextByRandomOrder: got result from _fileRepository.getRandomFile, nextaudio is null: ${nextAudio == null} name = ${nextAudio.name}");
     return nextAudio;
   }
 

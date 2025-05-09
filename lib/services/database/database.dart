@@ -56,13 +56,13 @@ class DBProvider {
     return list;
   }
 
-  deleteClient(int id) async {
-    final db = await database;
-    return db.delete("Client", where: "id = ?", whereArgs: [id]);
-  }
+  // deleteClient(int id) async {
+  //   final db = await database;
+  //   return db.delete("Client", where: "id = ?", whereArgs: [id]);
+  // }
 
-  deleteAll() async {
+  Future clearAllLogs() async {
     final db = await database;
-    db.rawDelete("Delete * from Client");
+    await db.rawDelete("delete from logs");
   }
 }

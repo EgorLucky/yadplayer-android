@@ -28,6 +28,11 @@ class LogHandler {
     _loadLoadAfterIdTasks.remove(currentLastId);
   }
 
+  void clearAllLogs() async {
+    await DBProvider.db.clearAllLogs();
+    logListNotifier.value = LogListState(logs: []);
+  }
+
   Future<List<Log>> _getLogs(int lastId) async {
     final logs = await DBProvider.db.getLogs(lastId, 300, true);
 

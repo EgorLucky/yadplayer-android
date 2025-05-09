@@ -31,6 +31,10 @@ class _LogPageState extends State<LogPage> {
     }
   }
 
+  _handleDeleteAllTap() {
+    handler.clearAllLogs();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,6 +43,9 @@ class _LogPageState extends State<LogPage> {
           ),
           body: Column(
           children: [
+            Row(children: [
+              IconButton(onPressed: _handleDeleteAllTap, icon: const Icon(Icons.delete))
+            ]),
             Expanded(
               child:
                 ValueListenableBuilder<LogListState>(

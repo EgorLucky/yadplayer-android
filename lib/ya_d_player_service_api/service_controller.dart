@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
-class ServiceController{
+class ServiceController {
   ServiceController({required this.host, required this.name});
 
   final String host;

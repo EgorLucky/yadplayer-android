@@ -1,7 +1,7 @@
 import 'package:yadplayer/ya_d_player_service_api/models/file.dart';
 import 'package:yadplayer/ya_d_player_service_api/service_controller.dart';
 
-class FileController extends ServiceController{
+class FileController extends ServiceController {
   FileController({required String host}) : super(host: host, name: "file");
 
   Future<List<File>> getFiles(String accessToken, String path, int page, bool recursive, int take) async {

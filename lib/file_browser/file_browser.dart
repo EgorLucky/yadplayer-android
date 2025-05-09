@@ -51,7 +51,7 @@ class FileBrowserState extends State<FileBrowser> {
             return Column(
               children: [
                 Container(
-                    child:Row(
+                    child: Row(
                         children:[
                           Expanded(
                               child: ElevatedButton(

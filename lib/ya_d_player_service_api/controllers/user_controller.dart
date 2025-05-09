@@ -1,8 +1,9 @@
+import 'package:yadplayer/services/logger.dart';
 import 'package:yadplayer/ya_d_player_service_api/models/user.dart';
 import 'package:yadplayer/ya_d_player_service_api/service_controller.dart';
 
-class UserController extends ServiceController{
-  UserController({required String host}): super(host: host, name: "user");
+class UserController extends ServiceController {
+  UserController({required String host, required Logger logger}): super(host: host, name: "user", logger: logger);
 
   Future<User> getUserInfo(String accessToken) async {
     var jsonResponse = await super.get<Map<String, dynamic>>(

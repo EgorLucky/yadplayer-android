@@ -1,9 +1,10 @@
+import 'package:yadplayer/services/logger.dart';
 import 'package:yadplayer/ya_d_player_service_api/models/sync_process.dart';
 
 import '../service_controller.dart';
 
-class SyncController  extends ServiceController{
-  SyncController({required String host}) : super(host: host, name: "synchronization");
+class SyncController extends ServiceController {
+  SyncController({required String host, required Logger logger}) : super(host: host, name: "synchronization", logger: logger);
 
   Future<List<SyncProcess>> getSyncs(String accessToken, int page) async {
     var jsonResponse = await super.post<List<dynamic>>(

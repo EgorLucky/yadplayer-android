@@ -142,16 +142,21 @@ class FileHandler {
       final oldState = progressNotifier.value;
       final total = oldState.total;
       
-      _logger.log("listening to current position");
+      //_logger.log("listening to current position");
 
       if(position >= total && total != Duration.zero && !loadNext) {
         loadNext = true;
         _logger.log("calling nextAudio position = $position total = $total loadNext = $loadNext");
-        await nextAudio();
+        try {
+          await nextAudio(); 
+        }
+        catch (e) {
+          _logger.log("file_handler.listenToCurrentPosition: caught exception while trying to get next audio " + e.toString());
+        }
         loadNext = false;
       }
       else {
-        _logger.log("nextAudio was not called position = $position total = $total loadNext = $loadNext");
+        //_logger.log("nextAudio was not called position = $position total = $total loadNext = $loadNext");
       }
 
       progressNotifier.value = ProgressBarState(

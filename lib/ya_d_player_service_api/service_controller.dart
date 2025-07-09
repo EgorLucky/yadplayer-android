@@ -64,13 +64,19 @@ class ServiceController {
     return result;
   }
 
-  Future<Response> sendRequest(String method, {required Uri uri, Map<String, String>? headers, Object? body}) {
+  Future<Response> sendRequest(String method, {required Uri uri, Map<String, String>? headers, Object? body}) async {
     try {
+      Future<http.Response>? response;
       if (method == "get")
-        return http.get(uri, headers: headers);
+        response = http.get(uri, headers: headers,);
       if (method == "post")
-        return http.post(uri, headers: headers, body: body);
-    } on Error
+        response = http.post(uri, headers: headers, body: body);
+
+      if (response != null) {
+        response = response.timeout(Duration(seconds: 10));
+        return await response;
+      }
+    }
     catch (e) {
       logger.log("ServiceController.sendRequest: exception was thrown: " + e.toString());
       throw e;
